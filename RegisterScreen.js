@@ -20,28 +20,30 @@ const RegisterScreen = ({ navigation }) => {
             return;
         }
 
-        try {
-            // Gửi OTP qua backend (cần implement backend gửi OTP)
-            // Ví dụ gửi OTP qua API
-            const response = await fetch('http://localhost:3000/send-otp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, phoneNumber }),
-            });
+        // Gửi mã OTP mặc định (1234) đến người dùng
+        const defaultOTP = '2975'; // Mã OTP mặc định
 
-            const data = await response.json();
-            if (data.success) {
-                // Chuyển hướng tới màn hình xác minh mã OTP
-                navigation.navigate('VerificationCode', { email, phoneNumber });
-            } else {
-                Alert.alert('Lỗi', 'Đã xảy ra lỗi khi gửi OTP.');
-            }
-        } catch (error) {
-            console.error('Error sending OTP:', error);
-            Alert.alert('Lỗi', 'Không thể gửi OTP. Vui lòng thử lại.');
-        }
+        Alert.alert(
+            '🔐 Xác minh OTP',
+            `Mã OTP của bạn là:\n\n🎉 ${defaultOTP} 🎉\n\nHãy nhập mã này để tiếp tục.`,
+            [
+                {
+                    text: 'Thử lại',
+                    onPress: () => console.log('Người dùng chọn thử lại'),
+                    style: 'cancel', // Nút có kiểu cancel
+                },
+                {
+                    text: 'Xác nhận',
+                    onPress: () =>
+                        navigation.navigate('VerificationCodeScreen', {
+                            email,
+                            phoneNumber,
+                            otp: defaultOTP,
+                        }),
+                },
+            ],
+            { cancelable: false } // Ngăn không cho đóng hộp thoại khi nhấn ngoài
+        );   
     };
 
     return (
@@ -49,7 +51,7 @@ const RegisterScreen = ({ navigation }) => {
             <Text style={[styles.title, { fontWeight: 'bold' }]}>deeps xin chào!!!</Text>
             <View style={styles.innerContainer}>
                 <Text style={[styles.loginTitle, { fontWeight: 'bold' }]}>Đăng ký</Text>
-                
+
                 <TextInput
                     style={styles.input}
                     placeholder="Nhập số điện thoại của bạn"
@@ -58,7 +60,7 @@ const RegisterScreen = ({ navigation }) => {
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                 />
-                
+
                 <TextInput
                     style={styles.input}
                     placeholder="Nhập email của bạn"
@@ -67,7 +69,7 @@ const RegisterScreen = ({ navigation }) => {
                     value={email}
                     onChangeText={setEmail}
                 />
-                
+
                 <TextInput
                     style={styles.input}
                     placeholder="Nhập mật khẩu"
@@ -76,7 +78,7 @@ const RegisterScreen = ({ navigation }) => {
                     value={password}
                     onChangeText={setPassword}
                 />
-                
+
                 <TextInput
                     style={styles.input}
                     placeholder="Nhập lại mật khẩu"
@@ -85,11 +87,11 @@ const RegisterScreen = ({ navigation }) => {
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                 />
-                
+
                 <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
                     <Text style={styles.buttonText}>Đăng ký</Text>
                 </TouchableOpacity>
-                
+
                 <View style={styles.signupContainer}>
                     <Text style={styles.createAccountText}>Bạn đã có tài khoản? </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>

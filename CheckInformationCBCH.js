@@ -76,9 +76,9 @@ const CheckInformationCBCH = ({ route }) => {
           <View style={styles.ticketInfoContainer}>
             {/* Nửa trên */}
             <View style={styles.ticketUpper}>
-              <Image source={require('./image/CBCH1.png')} style={styles.poster} />
+              <Image source={require('./film/image/CBCH1.png')} style={styles.poster} />
               <View style={styles.movieDetails}>
-                <Text style={styles.movieTitle}>CẬU BÉ CÁ HEO</Text>
+                <Text style={styles.movieTitle}>Cậu Bé Cá Heo</Text>
 
                 <View style={styles.warningRow}>
                   <Image source={require('./image/18+.png')} style={styles.warningIcon} />
@@ -96,8 +96,8 @@ const CheckInformationCBCH = ({ route }) => {
                 <Text>Rạp: {selectedCinema.name}</Text>
               </View>
               <View style={styles.ticketRight}>
-                <Text style={styles.label}>Định dạng:</Text>
-                <Text style={styles.value}>2D phụ đề</Text>
+                <Text style={styles.label}>Thể Loại:</Text>
+                <Text style={styles.value}>Gia đình, Hoạt hình</Text>
                 <Text style={styles.label}>Số ghế:</Text>
                 <Text style={styles.value}>{selectedSeats}</Text>
               </View>
@@ -122,8 +122,8 @@ const CheckInformationCBCH = ({ route }) => {
           <Text style={styles.sectionTitleBold}>Thông tin người nhận</Text>
           <TouchableOpacity style={styles.recipientInfoContainer}>
             <View style={styles.recipientInfoLeft}>
-              <Text style={styles.recipientName}>Nguyễn Bảo An</Text>
-              <Text style={styles.recipientDetails}>0987654321 - baoan@gmail.com</Text>
+              <Text style={styles.recipientName}>Nguyễn Trung Du</Text>
+              <Text style={styles.recipientDetails}>0387813695 - nguyentrungdubn@gmail.com</Text>
             </View>
             <Image source={require('./image/edit.png')} style={styles.editIcon} />
           </TouchableOpacity>

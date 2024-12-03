@@ -49,7 +49,7 @@ const NewPassScreen = ({ navigation }) => {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity 
                         style={styles.submitButton} 
-                        onPress={() => navigation.navigate('Login')} // Chuyển đến màn hình VerificationCodeScreen
+                        onPress={() => navigation.navigate('LoginRepair')} // Chuyển đến màn hình VerificationCodeScreen
                     >
                         <Text style={styles.buttonText}>Tiếp tục</Text>
                     </TouchableOpacity>

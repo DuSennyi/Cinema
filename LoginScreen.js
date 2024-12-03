@@ -13,13 +13,18 @@ const LoginScreen = () => {
     };
 
     const handleLogin = () => {
+        const predefinedUser = {
+            phoneNumber: '0387813695', // Số điện thoại mặc định
+            password: '12345678', // Mật khẩu mặc định
+        };
+    
         if (validatePhoneNumber(phoneNumber)) {
-            if (password.length < 8) {
-                Alert.alert('Lỗi', 'Mật khẩu phải có ít nhất 8 ký tự.');
-                return;
+            if (phoneNumber === predefinedUser.phoneNumber && password === predefinedUser.password) {
+                // Chuyển hướng sang HomeScreen sau khi đăng nhập thành công
+                navigation.navigate('Home');
+            } else {
+                Alert.alert('Lỗi', 'Số điện thoại hoặc mật khẩu không đúng.');
             }
-            // Chuyển hướng sang HomeScreen sau khi đăng nhập thành công
-            navigation.navigate('Home');
         } else {
             Alert.alert('Lỗi', 'Vui lòng nhập số điện thoại hợp lệ (bắt đầu bằng 03, 05, 07, 08, hoặc 09 và đủ 10 số).');
         }

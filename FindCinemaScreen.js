@@ -147,12 +147,16 @@ const App = () => {
             <Text style={styles.recommendedName}>{item.name}</Text>
         </View>
     );
+    const handleLogout = () => {
+        setModalVisible(false);
+        navigation.navigate('LoginRepair'); // Điều hướng về màn hình đăng nhập
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Image
-                    source={{ uri: 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/07/anh-avatar-dep-cho-con-gai-2.jpg' }}
+                    source={require('./image/avatar.png')}
                     style={styles.profileImage}
                 />
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -223,27 +227,11 @@ const App = () => {
                     <TouchableOpacity style={styles.overlay} onPress={() => setModalVisible(false)} />
                     <Animated.View style={[styles.modalContent, { transform: [{ translateX: slideAnim }] }]}>
                         <Text style={styles.modalTitle}>Deeps</Text>
-                        
-                        {/* Nút đóng ở góc trên bên phải */}
-                        <TouchableOpacity 
-                            onPress={() => setModalVisible(false)} 
-                            style={styles.closeButtonContainer} // Thêm style cho vị trí
-                        >
-                            <Text style={styles.closeButton}>X</Text>
+                        <TouchableOpacity onPress={handleLogout} style={styles.modalOption}>
+                            <Text style={styles.modalOptionText}>Đăng xuất</Text>
                         </TouchableOpacity>
-                        
-                        {/* Spacer để đẩy nút đăng xuất xuống dưới cùng */}
-                        <View style={styles.spacer} />
-                        
-                        {/* Nút Đăng xuất, chuyển đến trang Login */}
-                        <TouchableOpacity 
-                            style={styles.menuItem} 
-                            onPress={() => {
-                                setModalVisible(false); // Đóng modal trước khi chuyển hướng
-                                navigation.navigate('Login'); // Chuyển hướng đến trang Login
-                            }}
-                        >
-                            <Text style={styles.menuText}>Đăng xuất</Text>
+                        <TouchableOpacity style={styles.modalOption} onPress={() => navigation.navigate('Profile')}>
+                            <Text style={styles.modalOptionText}>Thông tin cá nhân</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </View>
@@ -462,6 +450,19 @@ const styles = StyleSheet.create({
         marginVertical: 15, // Thêm khoảng cách cho đẹp
         textAlign: 'left', // Canh giữa
         left: 16,
+    },
+    modalOption: {
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        width: '100%',
+        alignItems: 'center',
+    },
+    modalOptionText: {
+        fontSize: 18,
+        color: '#333',
+        fontWeight: '500',
+        textAlign: 'center',
     },
 });
 

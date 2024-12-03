@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-const VerificationCodeScreen = ({ navigation }) => {
+const VerificationCodeScreen = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '']); // Mảng chứa mã OTP
+
+    // Lấy mã OTP từ trang trước (thông qua params)
+    const { otpSent } = route.params || {}; // Mã OTP được gửi từ trang trước
+
+    // Tự động điền mã OTP khi nhận được từ trang trước
+    useEffect(() => {
+        if (otpSent) {
+            setCode(otpSent.split('')); // Chia mã OTP thành mảng và cập nhật vào các ô nhập
+        }
+    }, [otpSent]);
 
     const handleInputChange = (text, index) => {
         const newCode = [...code];
@@ -16,7 +26,7 @@ const VerificationCodeScreen = ({ navigation }) => {
             if (nextInputRef) nextInputRef.focus();
         }
 
-         // Tự động chuyển về ô trước nếu ô hiện tại bị xóa
+        // Tự động chuyển về ô trước nếu ô hiện tại bị xóa
         if (!text && index > 0) {
             const previousInput = index - 1;
             const previousInputRef = refs[previousInput];
@@ -77,7 +87,7 @@ const VerificationCodeScreen = ({ navigation }) => {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity 
                         style={styles.submitButton} 
-                        onPress={() => navigation.navigate('NewPass')} // Chuyển đến màn hình tiếp theo
+                        onPress={() => navigation.navigate('Login')} // Chuyển đến màn hình tiếp theo
                     >
                         <Text style={styles.buttonText}>Tiếp tục</Text>
                     </TouchableOpacity>

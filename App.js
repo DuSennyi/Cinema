@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import ProfileScreen from './ProfileScreen';
 import CheckInformation from './CheckInformation';
 import CheckInformationCam from './CheckInformationCam';
 import CheckInformationCDHM from './CheckInformationCDHM';
@@ -27,13 +27,13 @@ import FindCinemaScreen from './FindCinemaScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
 import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
+import LoginRepairScreen from './LoginRepairScreen';
 import NewPassScreen from './NewPassScreen';
 import PaymentDetails from './PaymentDetails';
 import PaymentDetailsCam from './PaymentDetailsCam';
 import PaymentDetailsCDHM from './PaymentDetailsCDHM';
 import PaymentDetailsJoker from './PaymentDetailsJoker';
 import PaymentDetailsCBCH from './PaymentDetailsCBCH';
-import PaymentScreen from './PaymentScreen';
 import RegisterScreen from './RegisterScreen';
 import SeatScreen from './SeatScreen';
 import SeatCBCHScreen from './SeatCBCHScreen';
@@ -42,7 +42,12 @@ import SeatCamScreen from './SeatCamScreen';
 import SeatCDHMScreen from './SeatCDHMScreen';
 import SelectVoucher from './SelectVoucher';
 import SuccessScreen from './SuccessScreen';
+import SuccessCamScreen from './SuccessCamScreen';
+import SuccessJokerScreen from './SuccessJokerScreen';
+import SuccessCBCHScreen from './SuccessCBCHScreen';
+import SuccessCDHMScreen from './SuccessCDHMScreen';
 import VerificationCodeScreen from './VerificationCodeScreen';
+import VerificationCodeRepairScreen from './VerificationCodeRepairScreen';
 import SelectShowTimesCamScreen from './SelectShowTimesCamScreen';
 import SelectShowTimesCDHMScreen from './SelectShowTimesCDHMScreen';
 import SelectShowTimesMaiScreen from './SelectShowTimesMaiScreen';
@@ -101,9 +106,11 @@ const App = () => {
             <Stack.Navigator initialRouteName="Splash">
                 <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="LoginRepair" component={LoginRepairScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="VerificationCode" component={VerificationCodeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="VerificationCodeScreen" component={VerificationCodeScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="VerificationCodeRepairScreen" component={VerificationCodeRepairScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="NewPass" component={NewPassScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="FindCinema" component={FindCinemaScreen} options={{ headerShown: false }}  />
@@ -138,14 +145,18 @@ const App = () => {
                 <Stack.Screen name="CheckInformationJoker" component={CheckInformationJoker} options={{ headerShown: false }} />
                 <Stack.Screen name="CheckInformationCBCH" component={CheckInformationCBCH} options={{ headerShown: false }} />
                 <Stack.Screen name="MyTicket" component={MyTicketScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetails" component={PaymentDetails} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsCam" component={PaymentDetailsCam} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsCDHM" component={PaymentDetailsCDHM} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsJoker" component={PaymentDetailsJoker} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsCBCH" component={PaymentDetailsCBCH} options={{ headerShown: false }} />
-                <Stack.Screen name="PaymentScreen" component={PaymentScreen} options={{ title: 'Chọn phương thức thanh toán' }} />
                 <Stack.Screen name="SelectVoucher" component={SelectVoucher} options={{ title: '           Chọn mã giảm giá' }} />
                 <Stack.Screen name="SuccessScreen" component={SuccessScreen}  options={{ title: '            Đặt vé thành công' }} />
+                <Stack.Screen name="SuccessCamScreen" component={SuccessCamScreen}  options={{ title: '            Đặt vé thành công' }} />
+                <Stack.Screen name="SuccessCDHMScreen" component={SuccessCDHMScreen}  options={{ title: '            Đặt vé thành công' }} />
+                <Stack.Screen name="SuccessJokerScreen" component={SuccessJokerScreen}  options={{ title: '            Đặt vé thành công' }} />
+                <Stack.Screen name="SuccessCBCHScreen" component={SuccessCBCHScreen}  options={{ title: '            Đặt vé thành công' }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -88,14 +88,14 @@ export default function App() {
 
     const handleLogout = () => {
         setModalVisible(false);
-        navigation.navigate('Login'); // Điều hướng về màn hình đăng nhập
+        navigation.navigate('LoginRepair'); // Điều hướng về màn hình đăng nhập
     };
 
     return (
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <Image source={{ uri: 'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/07/anh-avatar-dep-cho-con-gai-2.jpg' }} style={styles.profileImage} />
+                <Image source={require('../Film/image/avatar.png')} style={styles.profileImage} />
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <FontAwesome name="bars" size={24} color="black" />
                 </TouchableOpacity>
@@ -218,7 +218,7 @@ export default function App() {
                         <TouchableOpacity onPress={handleLogout} style={styles.modalOption}>
                             <Text style={styles.modalOptionText}>Đăng xuất</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.modalOption}>
+                        <TouchableOpacity style={styles.modalOption} onPress={() => navigation.navigate('Profile')}>
                             <Text style={styles.modalOptionText}>Thông tin cá nhân</Text>
                         </TouchableOpacity>
                     </Animated.View>

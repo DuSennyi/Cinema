@@ -76,9 +76,9 @@ const CheckInformationCam = ({ route }) => {
           <View style={styles.ticketInfoContainer}>
             {/* Nửa trên */}
             <View style={styles.ticketUpper}>
-              <Image source={require('./image/cam1.png')} style={styles.poster} />
+              <Image source={require('./film/image/cam1.png')} style={styles.poster} />
               <View style={styles.movieDetails}>
-                <Text style={styles.movieTitle}>CÁM</Text>
+                <Text style={styles.movieTitle}>MAI</Text>
 
                 <View style={styles.warningRow}>
                   <Image source={require('./image/18+.png')} style={styles.warningIcon} />
@@ -96,8 +96,8 @@ const CheckInformationCam = ({ route }) => {
                 <Text>Rạp: {selectedCinema.name}</Text>
               </View>
               <View style={styles.ticketRight}>
-                <Text style={styles.label}>Định dạng:</Text>
-                <Text style={styles.value}>2D phụ đề</Text>
+                <Text style={styles.label}>Thể loại:</Text>
+                <Text style={styles.value}>Kinh dị</Text>
                 <Text style={styles.label}>Số ghế:</Text>
                 <Text style={styles.value}>{selectedSeats}</Text>
               </View>
@@ -122,8 +122,8 @@ const CheckInformationCam = ({ route }) => {
           <Text style={styles.sectionTitleBold}>Thông tin người nhận</Text>
           <TouchableOpacity style={styles.recipientInfoContainer}>
             <View style={styles.recipientInfoLeft}>
-              <Text style={styles.recipientName}>Nguyễn Bảo An</Text>
-              <Text style={styles.recipientDetails}>0987654321 - baoan@gmail.com</Text>
+              <Text style={styles.recipientName}>Nguyễn Trung Du</Text>
+              <Text style={styles.recipientDetails}>0387813695 - nguyentrungdubn@gmail.com</Text>
             </View>
             <Image source={require('./image/edit.png')} style={styles.editIcon} />
           </TouchableOpacity>

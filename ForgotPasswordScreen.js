@@ -1,19 +1,42 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const ForgotPasswordScreen = ({ navigation }) => {
+    const defaultOTP = '4970'; // Mã OTP mặc định cho quên mật khẩu
+
+    const handleForgotPassword = () => {
+        Alert.alert(
+            '🔐 Xác minh OTP',
+            `Mã OTP của bạn là:\n\n🎉 ${defaultOTP} 🎉\n\nHãy nhập mã này để tiếp tục.`,
+            [
+                {
+                    text: 'Thử lại',
+                    onPress: () => console.log('Người dùng chọn thử lại'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Xác nhận',
+                    onPress: () =>
+                        navigation.navigate('VerificationCodeRepairScreen', {
+                            otp: defaultOTP,
+                        }),
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
     return (
         <KeyboardAvoidingView 
             style={styles.container} 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {/* Header chứa nút quay lại và tiêu đề */}
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                         <Image 
-                            source={require('./assets/back.png')} // Đường dẫn đến hình ảnh nút quay lại
-                            style={styles.backButtonImage} // Kích thước hình ảnh
+                            source={require('./assets/back.png')} 
+                            style={styles.backButtonImage} 
                         />
                     </TouchableOpacity>
                     <Text style={[styles.title]}>Quên mật khẩu</Text>
@@ -21,7 +44,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                 
                 <View style={styles.iconContainer}>
                     <Image 
-                        source={require('./assets/forgotpass.png')} // Đường dẫn đến hình ảnh khóa
+                        source={require('./assets/forgotpass.png')} 
                         style={styles.lockIcon}
                     />
                 </View>
@@ -31,13 +54,12 @@ const ForgotPasswordScreen = ({ navigation }) => {
                 <TextInput
                     style={styles.input}
                     keyboardType="phone-pad"
-                    placeholderTextColor="#A8A8A8" // Màu sắc placeholder
+                    placeholderTextColor="#A8A8A8" 
                 />
-                {/* Thêm View chứa nút để căn giữa */}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity 
                         style={styles.submitButton} 
-                        onPress={() => navigation.navigate('VerificationCode')} // Chuyển đến màn hình VerificationCodeScreen
+                        onPress={handleForgotPassword}
                     >
                         <Text style={styles.buttonText}>Tiếp tục</Text>
                     </TouchableOpacity>

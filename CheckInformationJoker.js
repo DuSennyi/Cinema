@@ -76,7 +76,7 @@ const CheckInformationJoker = ({ route }) => {
           <View style={styles.ticketInfoContainer}>
             {/* Nửa trên */}
             <View style={styles.ticketUpper}>
-              <Image source={require('./image/joker1.png')} style={styles.poster} />
+              <Image source={require('./film/image/joker1.png')} style={styles.poster} />
               <View style={styles.movieDetails}>
                 <Text style={styles.movieTitle}>JOKER: FOLIE À DEUX ĐIÊN CÓ ĐÔI</Text>
 
@@ -96,8 +96,8 @@ const CheckInformationJoker = ({ route }) => {
                 <Text>Rạp: {selectedCinema.name}</Text>
               </View>
               <View style={styles.ticketRight}>
-                <Text style={styles.label}>Định dạng:</Text>
-                <Text style={styles.value}>2D phụ đề</Text>
+                <Text style={styles.label}>Ngôn ngữ:</Text>
+                <Text style={styles.value}>Tiếng Việt</Text>
                 <Text style={styles.label}>Số ghế:</Text>
                 <Text style={styles.value}>{selectedSeats}</Text>
               </View>
@@ -122,8 +122,8 @@ const CheckInformationJoker = ({ route }) => {
           <Text style={styles.sectionTitleBold}>Thông tin người nhận</Text>
           <TouchableOpacity style={styles.recipientInfoContainer}>
             <View style={styles.recipientInfoLeft}>
-              <Text style={styles.recipientName}>Nguyễn Bảo An</Text>
-              <Text style={styles.recipientDetails}>0987654321 - baoan@gmail.com</Text>
+              <Text style={styles.recipientName}>Nguyễn Trung Du</Text>
+              <Text style={styles.recipientDetails}>0387813695 - nguyentrungdubn@gmail.com</Text>
             </View>
             <Image source={require('./image/edit.png')} style={styles.editIcon} />
           </TouchableOpacity>

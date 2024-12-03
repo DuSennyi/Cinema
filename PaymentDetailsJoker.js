@@ -1,6 +1,8 @@
-import { useNavigation, useRoute } from '@react-navigation/native'; // Điều hướng giữa các màn hình
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import PaymentModal from './PaymentModal';
 
 const PaymentDetailsJoker = () => {
   const navigation = useNavigation();
@@ -13,16 +15,32 @@ const PaymentDetailsJoker = () => {
     selectedCinema, 
     selectedCombos, 
     selectedSeats, 
-    totalPrice, // Dữ liệu tổng tiền từ params
-    recipient, // Thông tin người nhận
-    selectedVoucher, // Mã giảm giá
-  } = route.params || {}; // Lấy dữ liệu từ params
-  
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [finalPrice, setFinalPrice] = useState(totalPrice || 0); // Tổng tiền sau giảm giá
-  const [discount, setDiscount] = useState(0);  // Trạng thái lưu giá trị mã giảm giá
+    totalPrice, 
+    recipient, 
+    selectedVoucher,
+    selectedPayment // Thêm tham số này 
+  } = route.params || {};
 
-  // Tính toán giá trị mã giảm giá và cập nhật lại tổng tiền
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [finalPrice, setFinalPrice] = useState(totalPrice || 0); 
+  const [discount, setDiscount] = useState(0);  
+  const [voucherList, setVoucherList] = useState([  
+    { id: 1, title: 'Giảm 10k', condition: 'Đơn tối thiểu 100k', image: require('./image/voucher1.png'), discount: 10000, minAmount: 100000 },
+    { id: 2, title: 'Giảm 10%', condition: 'Đơn tối thiểu 100k', image: require('./image/voucher2.png'), discount: '10%', minAmount: 100000 },
+    { id: 3, title: 'Giảm 20k', condition: 'Thành viên mới', image: require('./image/voucher3.png'), discount: 20000, isNewMember: true },
+    { id: 4, title: 'Giảm 50k', condition: 'Đơn tối thiểu 300k', image: require('./image/voucher4.png'), discount: 50000, minAmount: 300000 },
+  ]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+
+  const handleSelectPaymentMethod = (method) => {
+    setSelectedPaymentMethod(method);
+    setModalVisible(false);
+  };
+  
+
+  const [selectedVoucherState, setSelectedVoucherState] = useState(null);
+
   useEffect(() => {
     if (totalPrice === undefined || isNaN(totalPrice)) {
       setErrorMessage("Không có thông tin thanh toán.");
@@ -30,30 +48,84 @@ const PaymentDetailsJoker = () => {
     }
 
     let discountAmount = 0;
-    if (selectedVoucher) {
-      if (typeof selectedVoucher.discount === 'number') {
-        discountAmount = selectedVoucher.discount; // Giảm theo số tiền
-      } else if (typeof selectedVoucher.discount === 'string' && selectedVoucher.discount.includes('%')) {
-        const percentage = parseInt(selectedVoucher.discount.replace('%', ''), 10);
-        discountAmount = (totalPrice * percentage) / 100; // Giảm theo tỷ lệ phần trăm
+    if (selectedVoucherState) {
+      if (typeof selectedVoucherState.discount === 'number') {
+        discountAmount = selectedVoucherState.discount; 
+      } else if (typeof selectedVoucherState.discount === 'string' && selectedVoucherState.discount.includes('%')) {
+        const percentage = parseInt(selectedVoucherState.discount.replace('%', ''), 10);
+        discountAmount = (totalPrice * percentage) / 100; 
       }
     }
     setDiscount(discountAmount);
-  }, [totalPrice, selectedVoucher]); // Khi totalPrice hoặc selectedVoucher thay đổi, tính toán lại giá trị giảm giá
-  
+  }, [totalPrice, selectedVoucherState]);
+
   const calculateFinalPrice = () => {
     if (isNaN(discount)) {
-      return totalPrice;  // Trả lại tổng tiền gốc nếu không có giảm giá hợp lệ
+      return totalPrice; 
     }
-    // Cộng thêm giá vé vào tổng tiền sau khi trừ giảm giá
-    const ticketPrice = 299000; // Thêm giá vé vào, có thể lấy từ params nếu cần
-    return totalPrice - discount + ticketPrice;  // Tính lại tổng tiền sau khi trừ giảm giá và cộng giá vé
+    const ticketPrice = 0; 
+    const comboPrice = selectedCombos?.reduce((sum, combo) => sum + combo.price, 0) || 0; 
+    return totalPrice - discount + ticketPrice + comboPrice;
   };
+
+  const applyVoucher = (voucher) => {
+    // Kiểm tra điều kiện của voucher
+    if (voucher.minAmount && totalPrice < voucher.minAmount) {
+      Alert.alert('Không đủ điều kiện', `Đơn hàng của bạn phải có giá trị tối thiểu ${voucher.minAmount.toLocaleString('vi-VN')}đ để áp dụng voucher "${voucher.title}".`);
+      return;
+    }
+
+    if (selectedVoucherState && selectedVoucherState.id === voucher.id) {
+      // Nếu voucher đã được chọn, bỏ chọn nó
+      setSelectedVoucherState(null);
+      setDiscount(0); // Bỏ giảm giá
+    } else {
+      // Chọn voucher mới
+      setSelectedVoucherState(voucher);
+    }
+    setFinalPrice(calculateFinalPrice());
+  };
+
+  
+  const handleConfirm = async () => {
+    // Kiểm tra xem người dùng đã chọn phương thức thanh toán chưa
+    if (!selectedPaymentMethod) {
+      Alert.alert("Thông báo", "Vui lòng chọn phương thức thanh toán trước khi xác nhận.");
+      return;
+    }
+  
+    // Kiểm tra thiết bị có hỗ trợ xác thực không
+    const compatible = await LocalAuthentication.hasHardwareAsync();
+    if (!compatible) {
+      Alert.alert("Thiết bị không hỗ trợ xác thực vân tay hoặc mật khẩu.");
+      return;
+    }
+  
+    // Kiểm tra thiết bị có dữ liệu vân tay/mật khẩu không
+    const biometrics = await LocalAuthentication.isEnrolledAsync();
+    if (!biometrics) {
+      Alert.alert("Không tìm thấy dữ liệu vân tay hoặc mật khẩu.");
+      return;
+    }
+  
+    // Thực hiện xác thực
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Xác nhận thanh toán",
+      cancelLabel: "Hủy",
+      fallbackLabel: "Nhập mật khẩu",
+    });
+  
+    if (result.success) {
+      // Chuyển đến màn hình thành công nếu xác thực thành công
+      navigation.navigate("SuccessJokerScreen");
+    } else {
+      Alert.alert("Xác thực thất bại. Vui lòng thử lại.");
+    }
+  };
+  
 
   return (
     <View style={styles.container}>
-
-      {/* Phần tiêu đề */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Image source={require('./image/back.png')} style={styles.backImage} />
@@ -61,15 +133,12 @@ const PaymentDetailsJoker = () => {
         <Text style={styles.title}>Chi tiết thanh toán</Text>
       </View>
 
-      {/* Cuộn thông tin */}
       <ScrollView contentContainerStyle={styles.scrollViewContent} style={{ flexGrow: 1 }}>
-        {/* Thông tin giao dịch */}
         <Text style={styles.transactionDetails}>Chi tiết giao dịch</Text>
         <View style={styles.formContainer}>
-          {/* Hiển thị thông tin phim, suất chiếu, ghế, và thông tin người nhận */}
           <View style={styles.infoRow}>
             <Text style={styles.label}>Phim:</Text>
-            <Text style={styles.value}>JOKER: FOLIE À DEUX ĐIÊN CÓ ĐÔI</Text>
+            <Text style={styles.value}>Mai</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
@@ -84,82 +153,96 @@ const PaymentDetailsJoker = () => {
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Phòng chiếu:</Text>
-            <Text style={styles.value}>{selectedSeats?.join(", ") || 'Không có thông tin'}</Text>
+            <Text style={styles.value}>|1| - {selectedSeats?.join(", ") || 'Không có thông tin'}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Giá vé:</Text>
-            <Text style={styles.value}>299.000đ</Text>
+            <Text style={styles.value}>{calculateFinalPrice().toLocaleString()}đ</Text>
           </View>
+
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Món ăn:</Text>
             <Text style={styles.value}>
               {selectedCombos?.map((combo, index) => (
-                <Text key={index}>{combo.name} - {combo.price}đ{index < selectedCombos.length - 1 ? ", " : ""}</Text>
+                <Text key={index}>{combo.name} {combo.price}{index < selectedCombos.length - 1 ? ", " : ""}</Text>
               ))}
             </Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Thông tin người nhận:</Text>
-            <Text style={styles.value}>{recipient?.name || 'Không có thông tin'}</Text>
+            <Text style={styles.value}>{recipient?.name || 'Nguyễn Trung Du'}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>SĐT:</Text>
-            <Text style={styles.value}>{recipient?.phone || 'Không có thông tin'}</Text>
+            <Text style={styles.value}>{recipient?.phone || '0387813695'}</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.infoRow}>
             <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{recipient?.email || 'Không có thông tin'}</Text>
+            <Text style={styles.value}>{recipient?.email || 'nguyentrungdubn@gmail.com'}</Text>
           </View>
         </View>
 
-        {/* Phương thức thanh toán */}
-        <Text style={styles.paymentMethodTitle}>Phương thức thanh toán</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('PaymentJokerScreen')}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
           <View style={styles.paymentContainer}>
-            <Image source={require('./image/credit.png')} style={styles.bankImage} />
+            <Image source={selectedPaymentMethod?.icon || require('./image/credit.png')} style={styles.bankImage} />
             <View style={styles.paymentInfo}>
-              <Text style={styles.bankName}>Thẻ tín dụng</Text>
+              <Text style={styles.bankName}>{selectedPaymentMethod?.name || 'Chọn phương thức thanh toán'}</Text>
               <Text style={styles.accountHolder}>Nhấn để chọn phương thức</Text>
             </View>
-            <Image  
-              source={require('./image/edit.png')} // Biểu tượng chỉnh sửa
-              style={styles.editIcon} 
-            />
           </View>
         </TouchableOpacity>
+
+        <PaymentModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSelect={handleSelectPaymentMethod}
+          modalOption={selectedPaymentMethod || {}} // Ensure that modalOption is never undefined
+        />
+
+        {/* Danh sách mã giảm giá */}
+        <Text style={styles.voucherText}>Mã giảm giá:</Text>
+        <View style={styles.voucherList}>
+          {voucherList.map((voucher) => (
+            <TouchableOpacity 
+              key={voucher.id} 
+              onPress={() => applyVoucher(voucher)} 
+              style={[styles.voucherItem, selectedVoucherState?.id === voucher.id && styles.selectedVoucher]}
+            >
+              <Image source={voucher.image} style={styles.voucherImage} />
+              <View style={styles.voucherInfo}>
+                <Text style={styles.voucherTitle}>{voucher.title}</Text>
+                <Text style={styles.voucherCondition}>{voucher.condition}</Text>
+              </View>
+              <Text style={styles.voucherDiscount}>
+                {typeof voucher.discount === 'number' 
+                  ? `${voucher.discount.toLocaleString('vi-VN')}đ` 
+                  : voucher.discount}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
 
-      {/* Footer với tổng tiền */}
-      <View style={styles.footer}>
-        <View style={styles.voucherContainer}>
-          <Image 
-            source={require('./image/voucher.png')}
-            style={styles.voucherImage}
-          />
-          <Text style={styles.voucherText}>Thêm mã giảm giá</Text>
-          <TouchableOpacity 
-            style={styles.addButton}
-            onPress={() => navigation.navigate('SelectVoucher')}
-          >
-            <Image 
-              source={require('./image/add.png')}
-              style={styles.addButtonImage}
-            />
-          </TouchableOpacity>
+        <View style={styles.footer}>
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalLabel}>Tổng tiền:</Text>
+            <Text style={styles.totalPrice}>{totalPrice.toLocaleString()}đ</Text>
+          </View>
+
+        <View style={styles.discountContainer}>
+          <Text style={styles.discountLabel}>Tiền sau giảm giá:</Text>
+          <Text style={styles.discountPrice}>{(totalPrice - discount).toLocaleString()}đ</Text>
         </View>
-        <View style={styles.divider} />
-        <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>Tổng tiền:</Text>
-          <Text style={styles.totalPrice}>{calculateFinalPrice().toLocaleString()}đ</Text>
-        </View>
-        <TouchableOpacity style={styles.payButton} onPress={() => navigation.navigate('SuccessScreen')}>
+
+        <TouchableOpacity style={styles.payButton} onPress={handleConfirm}>
           <Text style={styles.payButtonText}>Xác nhận</Text>
         </TouchableOpacity>
+
       </View>
     </View>
   );
@@ -170,6 +253,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 15,
+  },
+  voucherList: {
+    marginVertical: 10,
+  },
+  voucherItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+  },
+  selectedVoucher: {
+    borderColor: '#FF5722',
+    backgroundColor: '#FFEBEE',
+  },
+  voucherImage: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+  },
+  voucherInfo: {
+    flex: 1,
+  },
+  voucherTitle: {
+    fontSize: 14, // Align with Phương thức thanh toán
+    fontWeight: 'bold',
+  },
+  voucherCondition: {
+    fontSize: 14, // Align with Phương thức thanh toán
+    color: '#888',
+  },
+  voucherDiscount: {
+    fontSize: 16, // Same size as Tổng tiền
+    color: '#FF5722',
+    fontWeight: 'bold',
+  },
+  discountPrice: {
+    fontSize: 16, // Align with "Tiền khi giảm giá"
+    fontWeight: 'bold',
+    color: '#FF5722',
   },
   header: {
     flexDirection: 'row',
@@ -280,8 +406,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: '#797676',
   },
-
-
   editIcon: {
     width: 25,
     height: 25, // Biểu tượng edit
@@ -317,16 +441,20 @@ const styles = StyleSheet.create({
     height: 24,
   },
   totalContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Align in a row
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginVertical: 10,
   },
+  
   totalLabel: {
     fontSize: 16,
-  },
-  totalPrice: {
-    fontSize: 16,
     fontWeight: 'bold',
+  },
+
+  totalPrice: {
+    fontSize: 16, // Align with "Tiền khi giảm giá"
+    fontWeight: 'bold',
+    color: '#FF5722',
   },
   payButton: {
     backgroundColor: '#ffc107',
@@ -338,6 +466,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
+  },
+  discountContainer: {
+    flexDirection: 'row', // Align in a row
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+
+  discountLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  discountRow: {
+    flexDirection: 'row', // Same row for Tiền khi giảm giá and price
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  paymentMethodContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  paymentMethodIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  paymentMethodText: {
+    fontSize: 16,
+    color: '#333',
   },
 });
 

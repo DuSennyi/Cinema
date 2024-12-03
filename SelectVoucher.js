@@ -7,10 +7,11 @@ const SelectVoucher = () => {
   const route = useRoute(); // Nhận params từ màn hình trước
   
   // Đảm bảo rằng totalPrice được truyền qua trong route.params
-  const { totalPrice = 0 } = route.params || {}; // Nếu không có totalPrice thì mặc định là 0
+  const { totalPrice = 0, selectedTime, selectedCinema, selectedSeats, selectedCombos } = route.params || {}; // Các tham số cần thiết
+  
   const [selectedVoucher, setSelectedVoucher] = useState(null); // Trạng thái cho voucher đã chọn
   const [finalPrice, setFinalPrice] = useState(totalPrice); // Trạng thái cho tổng tiền sau khi giảm giá
-
+  
   // Kiểm tra nếu totalPrice không được truyền
   useEffect(() => {
     if (totalPrice === undefined) {
@@ -43,7 +44,7 @@ const SelectVoucher = () => {
       }
       setFinalPrice(totalPrice - discountAmount); // Cập nhật lại tổng tiền sau giảm giá
     }
-  }, [selectedVoucher, totalPrice]); // Khi selectedVoucher thay đổi, tính lại tổng tiền
+  }, [selectedVoucher, totalPrice]);
 
   const handleDone = () => {
     if (!selectedVoucher) {
@@ -52,9 +53,15 @@ const SelectVoucher = () => {
     }
 
     const selectedVoucherData = vouchers.find(voucher => voucher.id === selectedVoucher);
+    
+    // Điều hướng tới PaymentDetails
     navigation.navigate('PaymentDetails', { 
-      selectedVoucher: selectedVoucherData,
-      totalPrice: finalPrice // Truyền tổng tiền sau giảm giá
+      selectedVoucher: selectedVoucherData, 
+      totalPrice: finalPrice, 
+      selectedTime, 
+      selectedCinema, 
+      selectedSeats, 
+      selectedCombos 
     });
   };
 
@@ -77,10 +84,7 @@ const SelectVoucher = () => {
               </TouchableOpacity>
             </View>
             <TouchableOpacity 
-              style={[
-                styles.chooseButton, 
-                selectedVoucher === voucher.id && styles.chosenButton // Nếu đã chọn thì chuyển màu
-              ]}
+              style={[styles.chooseButton, selectedVoucher === voucher.id && styles.chosenButton]} 
               onPress={() => handleSelectVoucher(voucher.id)}
             >
               <Text style={styles.chooseButtonText}>
@@ -95,7 +99,6 @@ const SelectVoucher = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Nút Xong */}
       <TouchableOpacity 
         style={styles.doneButton} 
         onPress={handleDone} // Gọi hàm khi nhấn "Xong"
