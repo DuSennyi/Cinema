@@ -2,16 +2,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CheckInformation from './CheckInformation';
-import CheckInformationCam from './CheckInformationCam';
-import CheckInformationCBCH from './CheckInformationCBCH';
-import CheckInformationCDHM from './CheckInformationCDHM';
-import CheckInformationJoker from './CheckInformationJoker';
-import ComboCamScreen from './ComboCamScreen';
-import ComboCBCHScreen from './ComboCBCHScreen';
-import ComboCDHMScreen from './ComboCDHMScreen';
-import ComboJokerScreen from './ComboJokerScreen';
-import ComboScreen from './ComboScreen';
+import CheckInformation from './components/checkinformation/CheckInformation';
+import CheckInformationCam from './components/checkinformation/CheckInformationCam';
+import CheckInformationCBCH from './components/checkinformation/CheckInformationCBCH';
+import CheckInformationCDHM from './components/checkinformation/CheckInformationCDHM';
+import CheckInformationJoker from './components/checkinformation/CheckInformationJoker';
+import ComboCamScreen from './components/combo/ComboCamScreen';
+import ComboCBCHScreen from './components/combo/ComboCBCHScreen';
+import ComboCDHMScreen from './components/combo/ComboCDHMScreen';
+import ComboJokerScreen from './components/combo/ComboJokerScreen';
+import ComboScreen from './components/combo/ComboScreen';
 import Cam from './film/Cam';
 import Captain from './film/Captain';
 import CBCH from './film/CBCH';
@@ -22,38 +22,37 @@ import Joker from './film/Joker';
 import Mai from './film/Mai';
 import Mufasa from './film/Mufasa';
 import NhimSonic from './film/NhimSonic';
-import FindCinemaScreen from './FindCinemaScreen';
-import ForgotPasswordScreen from './ForgotPasswordScreen';
-import HomeScreen from './HomeScreen';
-import LoginRepairScreen from './LoginRepairScreen';
-import LoginScreen from './LoginScreen';
-import MyTicketScreen from './MyTicketScreen';
-import NewPassScreen from './NewPassScreen';
-import PaymentDetails from './PaymentDetails';
-import PaymentDetailsCam from './PaymentDetailsCam';
-import PaymentDetailsCBCH from './PaymentDetailsCBCH';
-import PaymentDetailsCDHM from './PaymentDetailsCDHM';
-import PaymentDetailsJoker from './PaymentDetailsJoker';
-import ProfileScreen from './ProfileScreen';
-import RegisterScreen from './RegisterScreen';
-import SeatCamScreen from './SeatCamScreen';
-import SeatCBCHScreen from './SeatCBCHScreen';
-import SeatCDHMScreen from './SeatCDHMScreen';
-import SeatJokerScreen from './SeatJokerScreen';
-import SeatScreen from './SeatScreen';
-import SelectShowTimesCamScreen from './SelectShowTimesCamScreen';
-import SelectShowTimesCBCHScreen from './SelectShowTimesCBCHScreen';
-import SelectShowTimesCDHMScreen from './SelectShowTimesCDHMScreen';
-import SelectShowTimesJokerScreen from './SelectShowTimesJokerScreen';
-import SelectShowTimesMaiScreen from './SelectShowTimesMaiScreen';
-import SelectVoucher from './SelectVoucher';
-import SuccessCamScreen from './SuccessCamScreen';
-import SuccessCBCHScreen from './SuccessCBCHScreen';
-import SuccessCDHMScreen from './SuccessCDHMScreen';
-import SuccessJokerScreen from './SuccessJokerScreen';
-import SuccessScreen from './SuccessScreen';
-import VerificationCodeRepairScreen from './VerificationCodeRepairScreen';
-import VerificationCodeScreen from './VerificationCodeScreen';
+import FindCinemaScreen from './components/FindCinemaScreen';
+import ForgotPasswordScreen from './components/forgotpassword/ForgotPasswordScreen';
+import HomeScreen from './components/HomeScreen';
+import LoginRepairScreen from './components/forgotpassword/LoginRepairScreen';
+import LoginScreen from './components/login/LoginScreen';
+import MyTicketScreen from './components/MyTicketScreen';
+import NewPassScreen from './components/forgotpassword/NewPassScreen';
+import PaymentDetails from './components/paymentdetails/PaymentDetails';
+import PaymentDetailsCam from './components/paymentdetails/PaymentDetailsCam';
+import PaymentDetailsCBCH from './components/paymentdetails/PaymentDetailsCBCH';
+import PaymentDetailsCDHM from './components/paymentdetails/PaymentDetailsCDHM';
+import PaymentDetailsJoker from './components/paymentdetails/PaymentDetailsJoker';
+import ProfileScreen from './components/ProfileScreen';
+import RegisterScreen from './components/login/RegisterScreen';
+import SeatCamScreen from './components/seat/SeatCamScreen';
+import SeatCBCHScreen from './components/seat/SeatCBCHScreen';
+import SeatCDHMScreen from './components/seat/SeatCDHMScreen';
+import SeatJokerScreen from './components/seat/SeatJokerScreen';
+import SeatScreen from './components/seat/SeatScreen';
+import SelectShowTimesCamScreen from './components/selectshowtime/SelectShowTimesCamScreen';
+import SelectShowTimesCBCHScreen from './components/selectshowtime/SelectShowTimesCBCHScreen';
+import SelectShowTimesCDHMScreen from './components/selectshowtime/SelectShowTimesCDHMScreen';
+import SelectShowTimesJokerScreen from './components/selectshowtime/SelectShowTimesJokerScreen';
+import SelectShowTimesMaiScreen from './components/selectshowtime/SelectShowTimesMaiScreen';
+import SuccessCamScreen from './components/success/SuccessCamScreen';
+import SuccessCBCHScreen from './components/success/SuccessCBCHScreen';
+import SuccessCDHMScreen from './components/success/SuccessCDHMScreen';
+import SuccessJokerScreen from './components/success/SuccessJokerScreen';
+import SuccessScreen from './components/success/SuccessScreen';
+import VerificationCodeRepairScreen from './components/forgotpassword/VerificationCodeRepairScreen';
+import VerificationCodeScreen from './components/login/VerificationCodeScreen';
 const Stack = createStackNavigator();
 
 const SplashScreen = ({ navigation }) => {
@@ -150,7 +149,6 @@ const App = () => {
                 <Stack.Screen name="PaymentDetailsCDHM" component={PaymentDetailsCDHM} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsJoker" component={PaymentDetailsJoker} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsCBCH" component={PaymentDetailsCBCH} options={{ headerShown: false }} />
-                <Stack.Screen name="SelectVoucher" component={SelectVoucher} options={{ title: '           Chọn mã giảm giá' }} />
                 <Stack.Screen name="SuccessScreen" component={SuccessScreen}  options={{ title: '            Đặt vé thành công' }} />
                 <Stack.Screen name="SuccessCamScreen" component={SuccessCamScreen}  options={{ title: '            Đặt vé thành công' }} />
                 <Stack.Screen name="SuccessCDHMScreen" component={SuccessCDHMScreen}  options={{ title: '            Đặt vé thành công' }} />
