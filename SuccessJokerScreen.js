@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StatusBar, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SuccessJokerScreen = () => {
     const navigation = useNavigation();
@@ -11,6 +11,7 @@ const SuccessJokerScreen = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 <View style={styles.content}>
                     <Image

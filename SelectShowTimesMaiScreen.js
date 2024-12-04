@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SelectShowTimesMaiScreen = () => {
   const navigation = useNavigation();
@@ -219,16 +219,19 @@ const SelectShowTimesMaiScreen = () => {
   
   return (
     <ScrollView style={styles.container}>
+      {/* Hiển thị StatusBar */}
+      <StatusBar
+        barStyle="light-content" // Thay đổi nội dung thành màu sáng (dành cho nền tối)
+        backgroundColor="#000" // Màu nền cho Android
+        hidden={false} // Đảm bảo thanh trạng thái luôn hiển thị
+      />
+
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Mai')}>
           <Image source={require('./image/back.png')} style={styles.backIconImage} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Chọn Suất chiếu</Text>
-        {canProceed && (
-          <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.continueButtonText}>Tiếp tục</Text>
-          </TouchableOpacity>
-        )}
+
       </View>
 
       <View style={styles.movieInfo}>
@@ -324,8 +327,17 @@ const SelectShowTimesMaiScreen = () => {
       );
     })
   )}
-</View>
-
+      </View>
+      <View style={styles.footer}>
+        {canProceed && (
+          <TouchableOpacity 
+              style={styles.payButton}
+              onPress={handleContinue}  // Hoặc bạn có thể thay thế bằng navigation.navigate nếu cần
+          >
+              <Text style={styles.payButtonText}>Đặt vé</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -529,6 +541,25 @@ const styles = StyleSheet.create({
   backIconImage: {
     width: 24,
     height: 24,
+  },
+  footer: {
+    height: 105,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    padding: 15,
+    bottom: 0,
+  },
+  payButton: {
+      backgroundColor: '#ffc107',
+      paddingVertical: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+  },
+  payButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#000',
   },
 });
 

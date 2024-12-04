@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const RegisterScreen = ({ navigation }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -48,6 +48,7 @@ const RegisterScreen = ({ navigation }) => {
 
     return (
         <View style={styles.outerContainer}>
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             <Text style={[styles.title, { fontWeight: 'bold' }]}>deeps xin chào!!!</Text>
             <View style={styles.innerContainer}>
                 <Text style={[styles.loginTitle, { fontWeight: 'bold' }]}>Đăng ký</Text>

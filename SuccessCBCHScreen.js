@@ -11,6 +11,7 @@ const SuccessCBCHScreen = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 <View style={styles.content}>
                     <Image

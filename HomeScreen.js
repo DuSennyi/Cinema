@@ -2,6 +2,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Video } from 'expo-av';  // Import Video from expo-av
 // Import các bộ phim tương ứng
 
 const NavButton = ({ icon, label, active, onPress }) => (
@@ -12,6 +13,13 @@ const NavButton = ({ icon, label, active, onPress }) => (
 );
 
 const { width: screenWidth } = Dimensions.get('window');
+const removeVietnameseTones = (str) => {
+    return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D");
+};
 const cinemaLogos = {
     CGV: require('./assets/Home/cgv_lg.png'),
     Beta: require('./assets/Home/beta_lg.png'),
@@ -23,6 +31,11 @@ const cinemaRatings = {
     Lotte: 4,  // Lotte có 5 sao
 };
 
+const videoSources = [
+    require('./assets/video/Mai.mp4'),
+    require('./assets/video/Captain_America.mp4'),
+];
+
 export default function App() {
     const scrollRef = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,28 +46,31 @@ export default function App() {
     const posterCount = 5;
     const navigation = useNavigation();
     const route = useRoute();
+    const [currentTab, setCurrentTab] = useState("Home"); // Tab mặc định
+    const videoRefs = useRef([]); // Mảng chứa tham chiếu tới các video
 
     const hotMovies = [
-        { src: require('./image/mai1.png'), name: 'Mai' },
-        { src: require('./image/CDHM1.png'), name: 'CDHM' },
-        { src: require('./image/joker1.png'), name: 'Joker' },
-        { src: require('./image/cam1.png'), name: 'Cam' },
-        { src: require('./image/CBCH1.png'), name: 'CBCH' },
+        { src: require('./image/mai1.png'), name: 'Mai', key: 'Mai' },
+        { src: require('./image/CDHM1.png'), name: 'CDHM', key: 'Cô dâu hào môn' },
+        { src: require('./image/joker1.png'), name: 'Joker', key: 'Joker' },
+        { src: require('./image/cam1.png'), name: 'Cam', key: 'Cám' },
+        { src: require('./image/CBCH1.png'), name: 'CBCH', key: 'Cậu bé cá heo' },
     ];
 
     const comingSoonMovies = [
-        { src: require('./image/captain1.png'), name: 'Captain' },
-        { src: require('./image/CTBL1.png'), name: 'CTBL' },
-        { src: require('./image/DiaDao1.png'), name: 'DiaDao' },
-        { src: require('./image/mufasa1.png'), name: 'Mufasa' },
-        { src: require('./image/NhimSonic1.png'), name: 'NhimSonic' },
+        { src: require('./image/captain1.png'), name: 'Captain', key: 'Captain' },
+        { src: require('./image/CTBL1.png'), name: 'CTBL', key: 'Công tử bạc liêu' },
+        { src: require('./image/DiaDao1.png'), name: 'DiaDao', key: 'Địa đạo' },
+        { src: require('./image/mufasa1.png'), name: 'Mufasa', key: 'Mufasa' },
+        { src: require('./image/NhimSonic1.png'), name: 'NhimSonic', key: 'Nhím Sonic' },
     ];
 
     const posters = currentCategory === "Phim HOT" ? hotMovies : comingSoonMovies;
 
     const filteredPosters = posters.filter(movie =>
-        movie.name.toLowerCase().includes(searchQuery.toLowerCase())
+        removeVietnameseTones(movie.key.toLowerCase()).includes(removeVietnameseTones(searchQuery.toLowerCase()))
     );
+    
 
     useEffect(() => {
         const interval = setTimeout(() => {
@@ -91,6 +107,7 @@ export default function App() {
         navigation.navigate('LoginRepair'); // Điều hướng về màn hình đăng nhập
     };
 
+    
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -182,7 +199,21 @@ export default function App() {
                         </View>
                     ))}
                 </View>
-
+                {/* Video Section */}
+                <Text style={styles.sectionTitle}>Trailer</Text>
+                <View style={styles.videoContainer}>
+                    {videoSources.map((videoSource, index) => (
+                        <View key={index} style={styles.videoItem}>
+                            <Video
+                                source={videoSource}
+                                style={styles.video}
+                                useNativeControls
+                                resizeMode="contain"
+                                isLooping
+                            />
+                        </View>
+                    ))}
+                </View>
             </ScrollView>
 
             {/* Bottom Navigation */}
@@ -454,4 +485,26 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         textAlign: 'center',
     },
+    videoContainer: {
+        marginTop: 20,
+        paddingHorizontal: 10,
+        borderRadius: 10, // Bo góc cho container
+        overflow: 'hidden', // Đảm bảo video không vượt quá bo góc
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    
+    videoItem: {
+        marginBottom: 15,
+        borderRadius: 10, // Bo góc cho item
+        overflow: 'hidden', // Đảm bảo video không vượt quá bo góc
+    },
+    
+    video: {
+        width: '100%',
+        height: 200,
+        backgroundColor: '#000',
+        borderRadius: 10, // Bo góc cho video
+    }
 });

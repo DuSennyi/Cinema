@@ -1,9 +1,9 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import PaymentModal from './PaymentModal';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const PaymentDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -32,12 +32,12 @@ const PaymentDetails = () => {
   ]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [voucherModalVisible, setVoucherModalVisible] = useState(false);
 
   const handleSelectPaymentMethod = (method) => {
     setSelectedPaymentMethod(method);
     setModalVisible(false);
   };
-  
 
   const [selectedVoucherState, setSelectedVoucherState] = useState(null);
 
@@ -88,27 +88,23 @@ const PaymentDetails = () => {
 
   
   const handleConfirm = async () => {
-    // Kiểm tra xem người dùng đã chọn phương thức thanh toán chưa
     if (!selectedPaymentMethod) {
       Alert.alert("Thông báo", "Vui lòng chọn phương thức thanh toán trước khi xác nhận.");
       return;
     }
   
-    // Kiểm tra thiết bị có hỗ trợ xác thực không
     const compatible = await LocalAuthentication.hasHardwareAsync();
     if (!compatible) {
       Alert.alert("Thiết bị không hỗ trợ xác thực vân tay hoặc mật khẩu.");
       return;
     }
   
-    // Kiểm tra thiết bị có dữ liệu vân tay/mật khẩu không
     const biometrics = await LocalAuthentication.isEnrolledAsync();
     if (!biometrics) {
       Alert.alert("Không tìm thấy dữ liệu vân tay hoặc mật khẩu.");
       return;
     }
   
-    // Thực hiện xác thực
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: "Xác nhận thanh toán",
       cancelLabel: "Hủy",
@@ -116,16 +112,36 @@ const PaymentDetails = () => {
     });
   
     if (result.success) {
-      // Chuyển đến màn hình thành công nếu xác thực thành công
+      // Lấy thời gian hiện tại
+      const currentTime = new Date().toLocaleString(); // Định dạng ngày giờ theo hệ thống
+  
+      // Lưu thông tin vào AsyncStorage
+      const ticketDetails = {
+        movieName: 'Mai', // Tên phim
+        name: recipient?.name || 'Nguyễn Trung Du',
+        phone: recipient?.phone || '0387813695',
+        email: recipient?.email || 'nguyentrungdubn@gmail.com',
+        cinemaRoom: selectedCinema?.name || 'Không có thông tin', // Phòng chiếu
+        seat: selectedSeats?.join(', ') || 'Không có thông tin ghế', // Vị trí ghế
+        foodItems: selectedCombos?.map(combo => combo.name).join(', ') || 'Không có món ăn', // Món ăn
+        time: selectedTime,
+        paymentMethod: selectedPaymentMethod?.name || 'Chưa chọn phương thức',
+        totalPrice: calculateFinalPrice(),
+        bookingTime: currentTime, // Thêm thông tin giờ đặt vé
+      };
+  
+      await AsyncStorage.setItem('upcomingTicket', JSON.stringify(ticketDetails));
+  
+      // Chuyển tới màn SuccessScreen
       navigation.navigate("SuccessScreen");
     } else {
       Alert.alert("Xác thực thất bại. Vui lòng thử lại.");
     }
   };
-  
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Image source={require('./image/back.png')} style={styles.backImage} />
@@ -187,6 +203,7 @@ const PaymentDetails = () => {
           </View>
         </View>
 
+        <Text style={styles.transactionDetails}>Phương thức thanh toán</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <View style={styles.paymentContainer}>
             <Image source={selectedPaymentMethod?.icon || require('./image/credit.png')} style={styles.bankImage} />
@@ -205,30 +222,67 @@ const PaymentDetails = () => {
         />
 
 
-        {/* Danh sách mã giảm giá */}
-        <Text style={styles.voucherText}>Mã giảm giá:</Text>
-        <View style={styles.voucherList}>
-          {voucherList.map((voucher) => (
-            <TouchableOpacity 
-              key={voucher.id} 
-              onPress={() => applyVoucher(voucher)} 
-              style={[styles.voucherItem, selectedVoucherState?.id === voucher.id && styles.selectedVoucher]}
-            >
-              <Image source={voucher.image} style={styles.voucherImage} />
-              <View style={styles.voucherInfo}>
-                <Text style={styles.voucherTitle}>{voucher.title}</Text>
-                <Text style={styles.voucherCondition}>{voucher.condition}</Text>
-              </View>
-              <Text style={styles.voucherDiscount}>
-                {typeof voucher.discount === 'number' 
-                  ? `${voucher.discount.toLocaleString('vi-VN')}đ` 
-                  : voucher.discount}
+        <Text style={styles.transactionDetails}>Mã giảm giá</Text>
+        <TouchableOpacity onPress={() => setVoucherModalVisible(true)} >
+          <View style={styles.paymentContainer}>
+            {/* Hiển thị hình ảnh voucher đã chọn hoặc hình ảnh mặc định */}
+            <Image
+              source={selectedVoucherState?.icon || require('./image/voucher.png')}
+              style={styles.bankImage}
+            />
+            <View style={styles.paymentInfo}>
+              {/* Hiển thị tên voucher đã chọn hoặc dòng chữ 'Chọn mã giảm giá' */}
+              <Text style={styles.bankName}>
+                {selectedVoucherState ? selectedVoucherState.title : 'Chọn mã giảm giá'}
               </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+              <Text style={styles.accountHolder}>Nhấn để chọn voucher</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
+
+        <Modal
+          visible={voucherModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setVoucherModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Chọn mã giảm giá</Text>
+              <ScrollView style={styles.voucherList}>
+                {voucherList.map((voucher) => (
+                  <TouchableOpacity
+                    key={voucher.id}
+                    onPress={() => {
+                      applyVoucher(voucher);
+                      setVoucherModalVisible(true); // Đóng modal khi chọn voucher
+                    }}
+                    style={[styles.voucherItem, selectedVoucherState?.id === voucher.id && styles.selectedVoucher]}
+                  >
+                    <Image source={voucher.image} style={styles.voucherImage} />
+                    <View style={styles.voucherInfo}>
+                      <Text style={styles.voucherTitle}>{voucher.title}</Text>
+                      <Text style={styles.voucherCondition}>{voucher.condition}</Text>
+                    </View>
+                    <Text style={styles.voucherDiscount}>
+                      {typeof voucher.discount === 'number'
+                        ? `${voucher.discount.toLocaleString('vi-VN')}đ`
+                        : voucher.discount}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setVoucherModalVisible(false)}
+              >
+                <Text style={styles.closeButtonText}>Đóng</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        </ScrollView>
         <View style={styles.footer}>
           <View style={styles.totalContainer}>
             <Text style={styles.totalLabel}>Tổng tiền:</Text>
@@ -269,8 +323,8 @@ const styles = StyleSheet.create({
     borderColor: '#E1E1E1',
   },
   selectedVoucher: {
-    borderColor: '#FF5722',
-    backgroundColor: '#FFEBEE',
+    borderColor: '#ffc107',
+    backgroundColor: '#fff8dd',
   },
   voucherImage: {
     width: 50,
@@ -290,13 +344,13 @@ const styles = StyleSheet.create({
   },
   voucherDiscount: {
     fontSize: 16, // Same size as Tổng tiền
-    color: '#FF5722',
+    color: '#ffc107',
     fontWeight: 'bold',
   },
   discountPrice: {
     fontSize: 16, // Align with "Tiền khi giảm giá"
     fontWeight: 'bold',
-    color: '#FF5722',
+    color: '#ffc107',
   },
   header: {
     flexDirection: 'row',
@@ -328,7 +382,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginVertical: 10,
     marginLeft: 5, // Căn trái
-    marginTop: 20, //
+    marginTop: 10, //
     color: '#797676',
   },
   formContainer: {
@@ -337,7 +391,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     padding: 15,
-    marginBottom: 20,
+    marginBottom: 10,
     marginHorizontal: 5,
   },
   infoRow: {
@@ -388,7 +442,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   bankImage: {
     width: 50,
@@ -455,7 +509,7 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 16, // Align with "Tiền khi giảm giá"
     fontWeight: 'bold',
-    color: '#FF5722',
+    color: '#ffc107',
   },
   payButton: {
     backgroundColor: '#ffc107',
@@ -496,6 +550,55 @@ const styles = StyleSheet.create({
   paymentMethodText: {
     fontSize: 16,
     color: '#333',
+  },
+  voucherButton: {
+    padding: 15,
+    backgroundColor: '#FFF',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginVertical: 10,
+  },
+  voucherButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#444',
+  },
+  
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#ffc107',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
 

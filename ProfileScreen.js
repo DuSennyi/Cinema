@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StatusBar, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ProfileScreen() {
@@ -7,6 +7,7 @@ export default function ProfileScreen() {
 
     return (
         <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             {/* Header với nút back */}
             <View style={styles.header}>
                 <TouchableOpacity

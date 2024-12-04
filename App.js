@@ -1,18 +1,17 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ProfileScreen from './ProfileScreen';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CheckInformation from './CheckInformation';
 import CheckInformationCam from './CheckInformationCam';
+import CheckInformationCBCH from './CheckInformationCBCH';
 import CheckInformationCDHM from './CheckInformationCDHM';
 import CheckInformationJoker from './CheckInformationJoker';
-import CheckInformationCBCH from './CheckInformationCBCH';
-import ComboScreen from './ComboScreen';
 import ComboCamScreen from './ComboCamScreen';
+import ComboCBCHScreen from './ComboCBCHScreen';
 import ComboCDHMScreen from './ComboCDHMScreen';
 import ComboJokerScreen from './ComboJokerScreen';
-import ComboCBCHScreen from './ComboCBCHScreen';
+import ComboScreen from './ComboScreen';
 import Cam from './film/Cam';
 import Captain from './film/Captain';
 import CBCH from './film/CBCH';
@@ -26,34 +25,35 @@ import NhimSonic from './film/NhimSonic';
 import FindCinemaScreen from './FindCinemaScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
 import HomeScreen from './HomeScreen';
-import LoginScreen from './LoginScreen';
 import LoginRepairScreen from './LoginRepairScreen';
+import LoginScreen from './LoginScreen';
+import MyTicketScreen from './MyTicketScreen';
 import NewPassScreen from './NewPassScreen';
 import PaymentDetails from './PaymentDetails';
 import PaymentDetailsCam from './PaymentDetailsCam';
+import PaymentDetailsCBCH from './PaymentDetailsCBCH';
 import PaymentDetailsCDHM from './PaymentDetailsCDHM';
 import PaymentDetailsJoker from './PaymentDetailsJoker';
-import PaymentDetailsCBCH from './PaymentDetailsCBCH';
+import ProfileScreen from './ProfileScreen';
 import RegisterScreen from './RegisterScreen';
-import SeatScreen from './SeatScreen';
-import SeatCBCHScreen from './SeatCBCHScreen';
-import SeatJokerScreen from './SeatJokerScreen';
 import SeatCamScreen from './SeatCamScreen';
+import SeatCBCHScreen from './SeatCBCHScreen';
 import SeatCDHMScreen from './SeatCDHMScreen';
+import SeatJokerScreen from './SeatJokerScreen';
+import SeatScreen from './SeatScreen';
+import SelectShowTimesCamScreen from './SelectShowTimesCamScreen';
+import SelectShowTimesCBCHScreen from './SelectShowTimesCBCHScreen';
+import SelectShowTimesCDHMScreen from './SelectShowTimesCDHMScreen';
+import SelectShowTimesJokerScreen from './SelectShowTimesJokerScreen';
+import SelectShowTimesMaiScreen from './SelectShowTimesMaiScreen';
 import SelectVoucher from './SelectVoucher';
-import SuccessScreen from './SuccessScreen';
 import SuccessCamScreen from './SuccessCamScreen';
-import SuccessJokerScreen from './SuccessJokerScreen';
 import SuccessCBCHScreen from './SuccessCBCHScreen';
 import SuccessCDHMScreen from './SuccessCDHMScreen';
-import VerificationCodeScreen from './VerificationCodeScreen';
+import SuccessJokerScreen from './SuccessJokerScreen';
+import SuccessScreen from './SuccessScreen';
 import VerificationCodeRepairScreen from './VerificationCodeRepairScreen';
-import SelectShowTimesCamScreen from './SelectShowTimesCamScreen';
-import SelectShowTimesCDHMScreen from './SelectShowTimesCDHMScreen';
-import SelectShowTimesMaiScreen from './SelectShowTimesMaiScreen';
-import SelectShowTimesCBCHScreen from './SelectShowTimesCBCHScreen';
-import SelectShowTimesJokerScreen from './SelectShowTimesJokerScreen';
-import MyTicketScreen from './MyTicketScreen';
+import VerificationCodeScreen from './VerificationCodeScreen';
 const Stack = createStackNavigator();
 
 const SplashScreen = ({ navigation }) => {
@@ -101,8 +101,7 @@ const App = () => {
 
 
     return (
-        <NavigationContainer>
-             <StatusBar hidden={true} />
+        <NavigationContainer>       
             <Stack.Navigator initialRouteName="Splash">
                 <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />

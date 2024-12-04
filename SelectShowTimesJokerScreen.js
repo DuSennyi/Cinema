@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SelectShowTimesJokerScreen = () => {
   const navigation = useNavigation();
@@ -189,7 +189,7 @@ const SelectShowTimesJokerScreen = () => {
     setSelectedTime("Tất cả"); // Reset selected time when day changes
     setSelectedCinema(null);  // Reset selected cinema when day changes
   }, [selectedDay]);
-
+  const canProceed = selectedDate && selectedTime !== 'Tất cả' && selectedCinema;
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
     if (tab === 'Thông tin') {
@@ -206,7 +206,6 @@ const SelectShowTimesJokerScreen = () => {
     const availableShowtimes = cinema.showtimes[selectedDay] || [];
     return selectedTime === 'Tất cả' || availableShowtimes.includes(selectedTime);
   });
-  const canProceed = selectedDate && selectedTime !== 'Tất cả' && selectedCinema;
   const handleContinue = () => {
     navigation.navigate('SeatJokerScreen', {
       selectedDate,
@@ -219,16 +218,21 @@ const SelectShowTimesJokerScreen = () => {
   
   return (
     <ScrollView style={styles.container}>
+
+{/* Hiển thị StatusBar */}
+<StatusBar
+        barStyle="light-content" // Thay đổi nội dung thành màu sáng (dành cho nền tối)
+        backgroundColor="#000" // Màu nền cho Android
+        hidden={false} // Đảm bảo thanh trạng thái luôn hiển thị
+      />
+
+
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Joker')}>
           <Image source={require('./image/back.png')} style={styles.backIconImage} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Chọn Suất chiếu</Text>
-        {canProceed && (
-          <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.continueButtonText}>Tiếp tục</Text>
-          </TouchableOpacity>
-        )}
+
       </View>
 
       <View style={styles.movieInfo}>
@@ -325,7 +329,16 @@ const SelectShowTimesJokerScreen = () => {
     })
   )}
 </View>
-
+<View style={styles.footer}>
+{canProceed && (
+          <TouchableOpacity 
+              style={styles.payButton}
+              onPress={handleContinue}  // Hoặc bạn có thể thay thế bằng navigation.navigate nếu cần
+          >
+              <Text style={styles.payButtonText}>Đặt vé</Text>
+          </TouchableOpacity>
+        )}           
+            </View>
     </ScrollView>
   );
 };
@@ -530,6 +543,24 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  footer: {
+    height: 105,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    padding: 15,
+},
+payButton: {
+    backgroundColor: '#ffc107',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+},
+payButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+},
 });
 
 export default SelectShowTimesJokerScreen;

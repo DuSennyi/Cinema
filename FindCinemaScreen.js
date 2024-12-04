@@ -1,7 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, StatusBar, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const NavButton = ({ icon, label, active, onPress }) => (
     <TouchableOpacity style={styles.navButton} onPress={onPress}>
@@ -154,6 +154,7 @@ const App = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             <View style={styles.header}>
                 <Image
                     source={require('./image/avatar.png')}

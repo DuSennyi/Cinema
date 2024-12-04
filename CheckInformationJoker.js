@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StatusBar, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const CheckInformationJoker = ({ route }) => {
   const navigation = useNavigation();
@@ -63,6 +63,7 @@ const CheckInformationJoker = ({ route }) => {
   
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Image source={require('./image/back.png')} style={styles.backIconImage} />

@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-firebase/app": "^21.0.0",
     "@react-native-firebase/auth": "^21.0.0",
@@ -25,6 +26,7 @@
     "dotenv": "^16.4.5",
     "expo": "^52.0.4",
     "expo-app-loading": "^2.1.1",
+    "expo-av": "^15.0.1",
     "expo-cli": "^6.3.12",
     "expo-font": "~13.0.1",
     "expo-local-authentication": "^15.0.1",
@@ -32,8 +34,8 @@
     "express": "^4.21.1",
     "film": "file:",
     "nodemailer": "^6.9.16",
-    "react": "18.3.1",
-    "react-native": "0.76.1",
+    "react": "^18.3.1",
+    "react-native": "^0.76.3",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-local-authentication": "^0.1.1",
     "react-native-paper": "^5.12.5",

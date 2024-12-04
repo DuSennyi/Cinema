@@ -67,6 +67,7 @@ const SelectVoucher = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
       <ScrollView style={styles.scrollView}>
         <Text style={styles.sectionTitle}>Thêm mã giảm giá</Text>
 

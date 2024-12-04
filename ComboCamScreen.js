@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
+import { View, StatusBar, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const combos = [
@@ -81,13 +81,13 @@ const ComboCamScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
+      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Image source={require('./image/back.png')} style={styles.backIconImage} />
         </TouchableOpacity>
         <Text style={styles.title}>Combo - Bắp Nước</Text>
-        <View style={{ width: 24 }} /> {/* Tạo không gian cân bằng */}
+        <View style={{ width: 24 }} />
       </View>
 
       <FlatList

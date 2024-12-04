@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StatusBar, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const NewPassScreen = ({ navigation }) => {
     return (
@@ -7,6 +7,7 @@ const NewPassScreen = ({ navigation }) => {
             style={styles.container} 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
+            <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 {/* Header chứa nút quay lại và tiêu đề */}
                 <View style={styles.header}>

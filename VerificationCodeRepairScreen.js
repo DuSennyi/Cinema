@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {StatusBar, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const VerificationCodeRepairScreen = ({ navigation, route }) => {
     const [code, setCode] = useState(['', '', '', '']); // Mảng chứa mã OTP
