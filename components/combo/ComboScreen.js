@@ -103,7 +103,7 @@ const ComboScreen = () => {
 
       <TouchableOpacity style={styles.continueButton} onPress={() => {
       const selectedCombosToSend = data.filter(item => item.quantity > 0); // Lọc các combo có số lượng lớn hơn 0
-      if (selectedCombosToSend.length === 0) {
+      if (selectedCombosToSend.length === -1) {
         alert('Vui lòng chọn ít nhất một combo!');
         return;
       }

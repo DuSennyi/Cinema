@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   methodHolder: { fontSize: 14 },
   methodNumber: { fontSize: 14, color: 'gray' },
   methodNote: { fontSize: 12, color: 'red' },
-  closeButton: { marginTop: 10, alignItems: 'center', padding: 10, backgroundColor: '#007bff', borderRadius: 5 },
+  closeButton: { marginTop: 10, alignItems: 'center', padding: 10, backgroundColor: '#ffc107', borderRadius: 5 },
   closeButtonText: { color: 'white', fontSize: 16 },
 });
 
