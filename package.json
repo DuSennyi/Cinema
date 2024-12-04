@@ -36,6 +36,7 @@
     "nodemailer": "^6.9.16",
     "react": "^18.3.1",
     "react-native": "^0.76.3",
+    "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-local-authentication": "^0.1.1",
     "react-native-paper": "^5.12.5",

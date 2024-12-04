@@ -108,15 +108,15 @@ const styles = StyleSheet.create({
     backButton: {
         marginRight: 10,
     },
-    backIconImage: {
-        width: 26,
-        height: 26,
-    },
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
         flex: 1,
+    },
+    backIconImage: {
+        width: 26,
+        height: 26,
     },
     content: {
         paddingHorizontal: 20,

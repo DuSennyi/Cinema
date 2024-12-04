@@ -105,7 +105,7 @@ const App = () => {
     const [searchQuery, setSearchQuery] = useState(''); // New state for search
     const slideAnim = useRef(new Animated.Value(300)).current;
     const navigation = useNavigation();
-
+    const [selectedLogo, setSelectedLogo] = useState(null);
     useEffect(() => {
         Animated.timing(slideAnim, {
             toValue: modalVisible ? 0 : 300,
@@ -119,9 +119,12 @@ const App = () => {
         navigation.navigate(route);
     };
 
-    const filteredCinemas = cinemas.filter(cinema => 
-        cinema.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredCinemas = cinemas.filter(cinema => {
+        const matchesSearch = cinema.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesLogo = !selectedLogo || cinema.logo === selectedLogo;
+        return matchesSearch && matchesLogo;
+    });
+    
 
     const renderCinemaItem = ({ item }) => (
         <View style={styles.cinemaContainer}>
@@ -142,11 +145,14 @@ const App = () => {
     );
 
     const renderRecommendedCinemaItem = ({ item }) => (
-        <View style={[styles.recommendedItem, { marginHorizontal: 10 }]}>
-            <Image source={item.logo} style={styles.recommendedLogo} />
-            <Text style={styles.recommendedName}>{item.name}</Text>
-        </View>
+        <TouchableOpacity onPress={() => setSelectedLogo(item.logo)}>
+            <View style={[styles.recommendedItem, { marginHorizontal: 10 }]}>
+                <Image source={item.logo} style={styles.recommendedLogo} />
+                <Text style={styles.recommendedName}>{item.name}</Text>
+            </View>
+        </TouchableOpacity>
     );
+    
     const handleLogout = () => {
         setModalVisible(false);
         navigation.navigate('LoginRepair'); // Điều hướng về màn hình đăng nhập
@@ -174,6 +180,16 @@ const App = () => {
                 />
                 <FontAwesome name="search" size={16} color="#666" style={styles.searchIcon} />
             </View>
+            {/* Nút Xóa Lọc */}
+            <TouchableOpacity
+                style={styles.clearFilterButton}
+                onPress={() => {
+                    setSearchQuery('');
+                    setSelectedLogo(null);
+                }}
+            >
+                <Text style={styles.clearFilterText}>Xóa lọc</Text>
+            </TouchableOpacity>
 
             <View style={styles.recommendedContainer}>
                 <Text style={styles.recommendedTitle}>Rạp gợi ý</Text>
@@ -213,7 +229,7 @@ const App = () => {
                 <NavButton
                     icon="cutlery"
                     label="Bắp nước"
-                    onPress={() => handleNavigation("ComboScreen", "ComboScreen")}
+                    onPress={() => handleNavigation("BuyPopcorn", "BuyPopcorn")}
                 />
                 <NavButton
                     icon="ticket"
@@ -246,6 +262,20 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    clearFilterButton: {
+        alignSelf: 'flex-end',
+        marginRight: 16,
+        marginBottom: 10,
+        backgroundColor: '#ffc107',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+    },
+    clearFilterText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },    
     header: {
         height: 60,
         flexDirection: 'row',

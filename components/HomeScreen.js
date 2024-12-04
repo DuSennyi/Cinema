@@ -79,7 +79,7 @@ export default function App() {
                 scrollRef.current.scrollTo({ x: nextIndex * 278, animated: true });
                 return nextIndex;
             });
-        }, 3000);
+        }, 6000);
 
         return () => clearTimeout(interval);
     }, [currentIndex]);
@@ -182,8 +182,12 @@ export default function App() {
                 {/* Cinema Section */}
                 <Text style={styles.sectionTitle}>Khám phá rạp</Text>
                 <View style={styles.cinemaList}>
-                        {Object.keys(cinemaLogos).map((cinema, index) => (
-                        <View key={index} style={styles.cinemaItem}>
+                    {Object.keys(cinemaLogos).map((cinema, index) => (
+                        <TouchableOpacity 
+                            key={index} 
+                            style={styles.cinemaItem}
+                            onPress={() => navigation.navigate('FindCinema', { cinemaName: cinema })} // Chuyển đến màn hình "Chọn rạp"
+                        >
                             <Image source={cinemaLogos[cinema]} style={styles.cinemaLogo} />
                             <View style={styles.cinemaInfo}>
                                 <Text style={styles.cinemaName}>{cinema}</Text>
@@ -196,9 +200,10 @@ export default function App() {
                                     ))}
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
+
                 {/* Video Section */}
                 <Text style={styles.sectionTitle}>Trailer</Text>
                 <View style={styles.videoContainer}>
@@ -232,7 +237,7 @@ export default function App() {
                 <NavButton
                     icon="cutlery"
                     label="Bắp nước"
-                    onPress={() => navigation.navigate("ComboScreen")}
+                    onPress={() => navigation.navigate("BuyPopcorn")}
                 />
                 <NavButton
                     icon="ticket"

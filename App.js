@@ -53,6 +53,7 @@ import SuccessJokerScreen from './components/success/SuccessJokerScreen';
 import SuccessScreen from './components/success/SuccessScreen';
 import VerificationCodeRepairScreen from './components/forgotpassword/VerificationCodeRepairScreen';
 import VerificationCodeScreen from './components/login/VerificationCodeScreen';
+import BuyPopcornScreen from './components/BuyPopcornScreen';
 const Stack = createStackNavigator();
 
 const SplashScreen = ({ navigation }) => {
@@ -149,6 +150,7 @@ const App = () => {
                 <Stack.Screen name="PaymentDetailsCDHM" component={PaymentDetailsCDHM} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsJoker" component={PaymentDetailsJoker} options={{ headerShown: false }} />
                 <Stack.Screen name="PaymentDetailsCBCH" component={PaymentDetailsCBCH} options={{ headerShown: false }} />
+                <Stack.Screen name="BuyPopcorn" component={BuyPopcornScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="SuccessScreen" component={SuccessScreen}  options={{ title: '            Đặt vé thành công' }} />
                 <Stack.Screen name="SuccessCamScreen" component={SuccessCamScreen}  options={{ title: '            Đặt vé thành công' }} />
                 <Stack.Screen name="SuccessCDHMScreen" component={SuccessCDHMScreen}  options={{ title: '            Đặt vé thành công' }} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, StatusBar, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,24 +14,7 @@ const MyTicketScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [ticket, setTicket] = useState(null);
   const [expandedTicketId, setExpandedTicketId] = useState(null);
-
-  const watchedMovies = [
-    {
-      movieName: 'Cô Dâu Hào Môn',
-      cinemaRoom: 'CGV',
-      paymentMethod: 'MOMO',
-      totalPrice: 120000,
-      bookingTime: '17:30:50 3/12/2024',
-    },
-    
-    {
-      movieName: 'Cậu Bé Cá Heo',
-      cinemaRoom: 'Lotte Cinema',
-      paymentMethod: 'MOMO',
-      totalPrice: 360000,
-      bookingTime: '9:26:37 6/11/2024',
-    },
-  ];
+  const [purchasedCombos, setPurchasedCombos] = useState([]);
 
   const toggleExpand = (id) => {
     setExpandedTicketId((prevId) => (prevId === id ? null : id));
@@ -48,17 +31,35 @@ const MyTicketScreen = ({ navigation }) => {
     fetchTicket();
   }, []);
 
+  useEffect(() => {
+    // Lấy dữ liệu từ AsyncStorage khi tab "Bắp nước đã mua" được chọn
+    const fetchPurchasedCombos = async () => {
+      try {
+        const data = await AsyncStorage.getItem('purchasedCombos');
+        if (data) {
+          setPurchasedCombos(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error('Error fetching purchased combos:', error);
+      }
+    };
+
+    if (activeTab === 'watched') {
+      fetchPurchasedCombos();  // Lấy dữ liệu bắp nước đã mua
+    }
+  }, [activeTab]);
+  
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false}/>
+      <StatusBar barStyle="light-content" backgroundColor="#000" hidden={false} />
       <View style={styles.header}>
-
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={backButtonImage} style={styles.backButton} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Vé của tôi</Text>
       </View>
-      
+
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
@@ -70,7 +71,7 @@ const MyTicketScreen = ({ navigation }) => {
           style={[styles.tab, activeTab === 'watched' && styles.activeTab]}
           onPress={() => setActiveTab('watched')}
         >
-          <Text style={[styles.tabText, activeTab === 'watched' && styles.activeTabText]}>Phim đã xem</Text>
+          <Text style={[styles.tabText, activeTab === 'watched' && styles.activeTabText]}>Bắp nước đã mua</Text>
         </TouchableOpacity>
       </View>
 
@@ -78,25 +79,25 @@ const MyTicketScreen = ({ navigation }) => {
         {activeTab === 'upcoming' && ticket ? (
           <View style={styles.ticketCard}>
             <Image source={avatarImage} style={styles.avatar} />
-  
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Họ tên:</Text>
               <Text style={styles.ticketDetail}>{ticket.name}</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>SĐT:</Text>
               <Text style={styles.ticketDetail}>{ticket.phone}</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Email:</Text>
               <Text style={styles.ticketDetail}>{ticket.email}</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Tên phim:</Text>
               <Text style={styles.ticketDetail}>{ticket.movieName || 'Chưa có thông tin phim'}</Text>
@@ -126,59 +127,49 @@ const MyTicketScreen = ({ navigation }) => {
               <Text style={styles.ticketDetail}>{ticket.time}</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Phương thức thanh toán:</Text>
               <Text style={styles.ticketDetail}>{ticket.paymentMethod}</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Giá tiền:</Text>
               <Text style={styles.ticketDetail}>{ticket.totalPrice.toLocaleString()}đ</Text>
             </View>
             <View style={styles.separator}></View>
-            
+
             <View style={styles.ticketRow}>
               <Text style={styles.ticketLabel}>Giờ xác nhận:</Text>
               <Text style={styles.ticketDetail}>{ticket.bookingTime}</Text>
             </View>
           </View>
         ) : activeTab === 'watched' ? (
-          watchedMovies.map((movie, index) => (
-            <View key={index} style={styles.ticketCard}>
-              <Image source={avatarImage} style={styles.avatar} />
-              <View style={styles.ticketRow}>
-                <Text style={styles.ticketLabel}>Tên phim:</Text>
-                <Text style={styles.ticketDetail}>{movie.movieName}</Text>
+          purchasedCombos.length > 0 ? (
+            <ScrollView contentContainerStyle={styles.comboList}>
+              <View style={styles.comboRow}>
+                {purchasedCombos.map((item, index) => (
+                  <View key={index} style={styles.comboCard}>
+                    <View style={styles.comboHeader}>
+                      <Image source={item.image} style={styles.comboAvatar} />
+                      <Text style={styles.comboTitle}>{item.name}</Text>
+                    </View>
+                    <Text style={styles.comboDetail}>Số lượng: {item.quantity}</Text>
+                    <Text style={styles.comboDetail}>
+                      Giá: {(item.newPrice * item.quantity).toLocaleString()}đ
+                    </Text>
+                    <Text style={styles.comboDetail}>Thời gian đặt: {item.purchaseTime}</Text>
+                  </View>
+                ))}
               </View>
-
-              <View style={styles.ticketRow}>
-                <Text style={styles.ticketLabel}>Phòng chiếu:</Text>
-                <Text style={styles.ticketDetail}>{movie.cinemaRoom}</Text>
-              </View>
-
-              <View style={styles.ticketRow}>
-                <Text style={styles.ticketLabel}>Phương thức thanh toán:</Text>
-                <Text style={styles.ticketDetail}>{movie.paymentMethod}</Text>
-              </View>
-
-              <View style={styles.ticketRow}>
-                <Text style={styles.ticketLabel}>Giá tiền:</Text>
-                <Text style={styles.ticketDetail}>{movie.totalPrice.toLocaleString()}đ</Text>
-              </View>
-
-
-              <View style={styles.ticketRow}>
-                <Text style={styles.ticketLabel}>Giờ xác nhận:</Text>
-                <Text style={styles.ticketDetail}>{movie.bookingTime}</Text>
-              </View>
-            </View>
-          ))
+            </ScrollView>
+          ) : (
+            <Text style={styles.noTicketText}>Chưa có bắp nước nào được mua.</Text>
+          )
         ) : (
           <Text style={styles.noTicketText}>Chưa có vé nào sắp xem.</Text>
         )}
-        
       </View>
     </View>
   );
@@ -324,6 +315,41 @@ const styles = StyleSheet.create({
   },
   noTicketText: {
     fontSize: 16,
+    color: '#777',
+  },
+  comboList: {
+    paddingBottom: 40,
+  },
+  comboRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  comboCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    elevation: 4,
+  },
+  comboHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  comboAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 8,
+  },
+  comboTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  comboDetail: {
+    fontSize: 12,
     color: '#777',
   },
 });
